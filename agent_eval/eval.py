@@ -165,7 +165,7 @@ def main():
     num_samples = args.num_samples if args.num_samples is not None else len(dataset)
     print(f"Evaluating on {num_samples} samples")
         
-    methods = ["ZSCoT", "CoT"]
+    methods = ["Base"]
     final_results = {}
 
     for method in methods:
