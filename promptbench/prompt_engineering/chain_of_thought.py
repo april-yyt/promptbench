@@ -55,7 +55,7 @@ class ZSCoT(BaseCoT):
         prompt_question = model.convert_text_to_prompt(input_text, 'user')
         
         instr_get_answer = self.cot_trigger + '\n' + \
-                           f'Please output your answer at the end as ##<your answer ({self.output_range})>'
+                           f'Please output your answer at the end as ##<your answer (arabic numerals)>'
         prompt_get_answer = model.convert_text_to_prompt(instr_get_answer, 'assistant')
         
         prompt_get_answer = model.concat_prompts([prompt_question, prompt_get_answer])
@@ -92,15 +92,17 @@ class CoT(BaseCoT):
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.few_shot_examples = get_prompt(['chain_of_thought', self.dataset_name])
+        self.few_shot_examples = get_prompt(['chain_of_thought', 'gsm8k'])
+        print(self.dataset_name)
     
     def query(self, input_text, model):
-        instr_question = self.few_shot_examples + '\n'+ 'Q: ' + input_text + '\n' + 'A:'
+        instr_question = self.few_shot_examples + '\n'+ 'Q: ' + input_text + '\n' + self.cot_trigger + '\nPlease output your answer at the end as ##<your answer (arabic numerals)>' + '\n' + 'A:'
         prompt_question = model.convert_text_to_prompt(instr_question, 'user')
-        instr_get_answer = self.cot_trigger + '\n' + \
-                           f'Please output your answer at the end as ##<your answer ({self.output_range})>'
-        prompt_get_answer = model.convert_text_to_prompt(instr_get_answer, 'assistant')
-        prompt_get_answer = model.concat_prompts([prompt_question, prompt_get_answer])
+        # instr_get_answer = self.cot_trigger + '\n' + \
+        #                    f'Please output your answer at the end as ##<your answer (arabic numerals)>'
+        # prompt_get_answer = model.convert_text_to_prompt(instr_get_answer, 'assistant')
+        # prompt_get_answer = model.concat_prompts([prompt_question, prompt_get_answer])
+        prompt_get_answer = prompt_question
         
         answer = model(prompt_get_answer)
         
@@ -109,7 +111,3 @@ class CoT(BaseCoT):
             print(answer)
         
         return answer
-          
-        
-         
-     
